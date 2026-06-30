@@ -39,3 +39,26 @@ async def receive_number(update: Update, context: ContextTypes.DEFAULT_TYPE):
     conn.commit()
     conn.close()
     await update.message.reply_text(f"✅ আপনার {service.upper()} নম্বরটি সফলভাবে সেভ হয়েছে!")
+import logging
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, MessageHandler, filters
+from handlers.user_handler import start, service_select, receive_number
+from handlers.admin_handler import admin_menu, admin_stats, admin_broadcast
+
+# Logging setup
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+def main():
+    TOKEN = "আপনার_বট_টোকেন_এখানে_দিন"
+    app = ApplicationBuilder().token(TOKEN).build()
+    
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(admin_menu, pattern='admin'))
+    app.add_handler(CallbackQueryHandler(admin_stats, pattern='admin_stats'))
+    app.add_handler(CallbackQueryHandler(service_select, pattern='^(wa|tg|ig|fb)$'))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, receive_number))
+    
+    print("Bot is running...")
+    app.run_polling()
+
+if __name__ == '__main__':
+    main()
