@@ -17,3 +17,9 @@ def main():
 
 if __name__ == '__main__':
     main()
+from handlers.user_handler import service_select, receive_number
+from telegram.ext import CallbackQueryHandler, MessageHandler, filters
+
+# হ্যান্ডলার যোগ করার জায়গায় এগুলো লিখুন
+app.add_handler(CallbackQueryHandler(service_select, pattern='^(wa|tg|ig|fb)$'))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, receive_number))
